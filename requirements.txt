@@ -1,0 +1,22 @@
+msal==1.34.0
+
+# Google Drive API (Service Account)
+google-api-python-client==2.108.0
+google-auth-httplib2==0.1.1
+google-auth==2.23.4
+
+# MongoDB
+pymongo==4.6.0
+
+# Email & Slack Notifications (Async)
+aiohttp==3.9.1
+aiosmtplib==3.0.1
+
+# Scheduler
+schedule==1.2.0
+
+# Environment variables
+python-dotenv==1.0.0
+
+# Logging
+colorlog==6.8.0
