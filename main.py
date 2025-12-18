@@ -335,16 +335,14 @@ class CatalogPublisher:
 
 def main():
     """Función principal"""
-    print("""
-    ╔═══════════════════════════════════════════════════════╗
-    ║                                                       ║
-    ║       📚 CATALOG PUBLICATION SYSTEM 📚               ║
-    ║                                                       ║
-    ║       Publicación automática de catálogos            ║
-    ║       Local → Google Drive → FTP                     ║
-    ║                                                       ║
-    ╚═══════════════════════════════════════════════════════╝
-    """)
+    # Banner deshabilitado para evitar errores de codificación en pythonw.exe
+    # El banner solo es útil en modo interactivo, no en ejecución silenciosa
+    try:
+        logger.info("=" * 60)
+        logger.info("CATALOG PUBLICATION SYSTEM - Starting")
+        logger.info("=" * 60)
+    except Exception:
+        pass  # Ignorar errores de codificación en pythonw.exe
 
     # Crear instancia del publicador
     publisher = CatalogPublisher()

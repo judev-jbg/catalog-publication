@@ -15,6 +15,7 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
         PYTHONUNBUFFERED: '1',
+        PYTHONIOENCODING: 'utf-8',  // Forzar UTF-8 para evitar errores de codificación
         PYTHONPATH: 'C:/Users/junior.marketing/Documents/catalog-publication'
       },
       error_file: './logs/pm2-error.log',
