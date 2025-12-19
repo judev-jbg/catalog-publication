@@ -271,7 +271,9 @@ class CatalogPublisher:
 
             # Preparar mensaje de resumen
             if deleted_files:
-                success_msg = f"✅ Se publicaron {len(deleted_files)} catálogos exitosamente"
+                # Construir lista de archivos publicados
+                files_list = "\n".join([f"> {file}" for file in deleted_files])
+                success_msg = f"✅ Se publicaron {len(deleted_files)} catálogos exitosamente.\n{files_list}"
                 run_notification_sync(
                     self.notifier.notify_success(
                         "Publicación completada",
