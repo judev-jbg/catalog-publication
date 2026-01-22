@@ -31,7 +31,8 @@ class CatalogPublisher:
 
         # Validar configuración
         if not validate_config():
-            logger.warning("⚠️  Configuración incompleta, algunas funcionalidades pueden no estar disponibles")
+            logger.warning(
+                "⚠️  Configuración incompleta, algunas funcionalidades pueden no estar disponibles")
 
         # Inicializar servicios
         self.file_service = FileService()
@@ -69,9 +70,9 @@ class CatalogPublisher:
         }
 
         # 1. Normalizar nombre del archivo
-        normalized_name = normalize_catalog_name(file_name)
+        normalized_name, found_in_mapping = normalize_catalog_name(file_name)
 
-        if "No se ha encontrado" in normalized_name or normalized_name == file_name:
+        if not found_in_mapping:
             error_msg = f"No se encontró mapeo para el archivo: {file_name}"
             logger.error(f"❌ {error_msg}")
             result['errors'].append(error_msg)
@@ -119,13 +120,15 @@ class CatalogPublisher:
 
         # 4. Subir/actualizar en Google Drive
         logger.info("☁️  Paso 2/3: Subiendo a Google Drive...")
-        drive_result = self.drive_service.upload_or_update(file_content, file_name)
+        drive_result = self.drive_service.upload_or_update(
+            file_content, file_name)
 
         if drive_result['success']:
             result['drive'] = True
             self.mongo_service.insert_log(
                 execution_id, file_name, "drive", "success",
-                {'action': drive_result['action'], 'file_id': drive_result.get('file_id')}
+                {'action': drive_result['action'],
+                    'file_id': drive_result.get('file_id')}
             )
         else:
             error_msg = f"Error al subir a Drive"
@@ -170,7 +173,8 @@ class CatalogPublisher:
             logger.info(f"✅ Archivo procesado exitosamente: {file_name}")
         else:
             logger.warning(f"⚠️  Archivo procesado parcialmente: {file_name}")
-            logger.warning(f"   Local: {result['local']}, Drive: {result['drive']}, FTP: {result['ftp']}")
+            logger.warning(
+                f"   Local: {result['local']}, Drive: {result['drive']}, FTP: {result['ftp']}")
 
         return result
 
@@ -215,16 +219,19 @@ class CatalogPublisher:
                         )
                     )
             else:
-                logger.info(f"⏭️  Archivo no eliminado (proceso incompleto): {file_name}")
+                logger.info(
+                    f"⏭️  Archivo no eliminado (proceso incompleto): {file_name}")
                 error_files.append(file_name)
 
         # Limpiar documentos de archivos que no se pudieron procesar completamente
         non_deletable = [f for f in files_to_check if not f['canDelete']]
         if non_deletable:
             for file_info in non_deletable:
-                self.mongo_service.delete_logs(execution_id, file_info['fileName'])
+                self.mongo_service.delete_logs(
+                    execution_id, file_info['fileName'])
 
-        logger.info(f"✅ Limpieza completada: {len(deleted_files)} eliminados, {len(error_files)} con errores")
+        logger.info(
+            f"✅ Limpieza completada: {len(deleted_files)} eliminados, {len(error_files)} con errores")
 
         return deleted_files, error_files
 
@@ -249,14 +256,6 @@ class CatalogPublisher:
 
             logger.info(f"✅ Encontrados {len(catalogs)} catálogos")
 
-            # Notificar inicio
-            run_notification_sync(
-                self.notifier.notify_info(
-                    "Iniciando publicación de catálogos",
-                    f"Catálogos detectados: {len(catalogs)}"
-                )
-            )
-
             # 2. Procesar cada catálogo
             results = []
             for catalog in catalogs:
@@ -264,7 +263,8 @@ class CatalogPublisher:
                 results.append(result)
 
             # 3. Limpieza de archivos procesados exitosamente
-            deleted_files, error_files = self.cleanup_source_files(execution_id)
+            deleted_files, error_files = self.cleanup_source_files(
+                execution_id)
 
             # 4. Enviar resumen final
             logger.info("\n📤 Enviando resumen final...")
@@ -314,7 +314,8 @@ class CatalogPublisher:
     def run_scheduled(self):
         """Ejecuta el flujo en modo programado"""
         logger.info(f"⏰ Programando ejecución cada {SCHEDULE_TIME} minutos")
-        logger.info("   Horario: Cada 15 minutos, de 8:00 a 16:00, Lunes a Viernes")
+        logger.info(
+            "   Horario: Cada 15 minutos, de 8:00 a 16:00, Lunes a Viernes")
         logger.info("   (Presiona Ctrl+C para detener)\n")
 
         # Programar ejecución cada X minutos
